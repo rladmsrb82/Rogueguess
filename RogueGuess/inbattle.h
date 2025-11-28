@@ -1,8 +1,8 @@
-// inbattle.h
+ï»¿// inbattle.h
 #ifndef INBATTLE_H
 #define INBATTLE_H
 
-// ÇÃ·¹ÀÌ¾î Á¤º¸
+// í”Œë ˆì´ì–´ ì •ë³´
 typedef struct {
     int level;
     int exp;
@@ -10,31 +10,37 @@ typedef struct {
     int gold;
     int rebirth_coin;
 
-    // ¾ÆÀÌÅÛ
-    int item_potion_small;     // ÀÛÀº Æ÷¼Ç °³¼ö
-    int item_insight;          // ³¯Ä«·Î¿î Á÷°¨ ¾ÆÀÌÅÛ °³¼ö
-    int item_second_chance;    // µÎ ¹øÂ° ±âÈ¸ ¾ÆÀÌÅÛ °³¼ö
+    // ì•„ì´í…œ
+    int item_potion_small;
+    int item_insight;
+    int item_second_chance;
 
-    // Æ¯¼º(traits)
-    int trait_hp_level;            // Ã¼·Â Áõ°¡ (0~4)
-    int trait_range_level;         // Á¤´ä ÆÇÁ¤ ¹üÀ§ È®´ë (0~3 ¡æ ¡¾0~3)
-    int trait_gold_bonus_level;    // °ñµå º¸³Ê½º (0~3 ¡æ +0,10,20,30)
-    int trait_exact_level;         // Á¤È®ÇÑ °¨°¢ (0/1 ¡æ º¸»ó 2¹è)
-    int trait_insight_level;       // ³¯Ä«·Î¿î Á÷°¨ ÆĞ½Ãºê (0/1)
-    int trait_second_chance_level; // µÎ ¹øÂ° ±âÈ¸ ÆĞ½Ãºê (0/1)
+    // ì¼ë°˜ íŠ¹ì„± (ì´ë²ˆ ëŸ° ë™ì•ˆë§Œ)
+    int trait_hp_level;
+    int trait_range_level;
+    int trait_gold_bonus_level;
+    int trait_exact_level;
+    int trait_insight_level;
+    int trait_second_chance_level;
+
+    // ğŸ”¹ ì˜êµ¬ íŒ¨ì‹œë¸Œ (í™˜ìƒ ìƒì ì—ì„œ ì‚¬ëŠ” ê²ƒë“¤)
+    int rebirth_hp_level;             // ì˜êµ¬ HP ë³´ë„ˆìŠ¤ (0~3)
+    int rebirth_range_level;          // ì˜êµ¬ íŒì • ë²”ìœ„ ë³´ë„ˆìŠ¤ (0~3)
+    int rebirth_second_chance_level;  // ì˜êµ¬ ë¶€í™œ íšŸìˆ˜ (0~3, ëŸ°ë‹¹)
 } Player;
 
-// ÀüÅõ/½ºÅ×ÀÌÁö »óÅÂ
+
+// ì „íˆ¬/ìŠ¤í…Œì´ì§€ ìƒíƒœ
 typedef struct {
-    int stage;       // ½ºÅ×ÀÌÁö ¹øÈ£
-    int mob_index;   // 1,2 = Àâ¸÷, 3 = º¸½º
-    int hp;          // ÇöÀç HP
-    int max_hp;      // ÃÖ´ë HP
-    int max_number;  // ¼ıÀÚ ¹üÀ§ (1 ~ max_number)
-    int in_battle;   // ÀüÅõ ÁßÀÌ¸é 1, ¾Æ´Ï¸é 0
+    int stage;       // ìŠ¤í…Œì´ì§€ ë²ˆí˜¸
+    int mob_index;   // 1,2 = ì¡ëª¹, 3 = ë³´ìŠ¤
+    int hp;          // í˜„ì¬ HP
+    int max_hp;      // ìµœëŒ€ HP
+    int max_number;  // ìˆ«ì ë²”ìœ„ (1 ~ max_number)
+    int in_battle;   // ì „íˆ¬ ì¤‘ì´ë©´ 1, ì•„ë‹ˆë©´ 0
 } GameState;
 
-// 1½ºÅ×ÀÌÁö ·± ½ÃÀÛ (1-1 ¡æ 1-2 ¡æ 1-3 º¸½º)
+// 1ìŠ¤í…Œì´ì§€ ëŸ° ì‹œì‘ (1-1 â†’ 1-2 â†’ 1-3 ë³´ìŠ¤)
 void start_new_game(Player* p, GameState* g);
 
 #endif

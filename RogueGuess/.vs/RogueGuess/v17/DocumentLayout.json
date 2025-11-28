@@ -11,16 +11,16 @@
       "RelativeMoniker": "D:0:0:{6DC78164-0E5A-4544-93BA-7BBC027A4DD3}|RogueGuess.vcxproj|solutionrelative:inbattle.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{6DC78164-0E5A-4544-93BA-7BBC027A4DD3}|RogueGuess.vcxproj|C:\\Users\\owner_\\source\\repos\\RogueGuess\\inbattle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{6DC78164-0E5A-4544-93BA-7BBC027A4DD3}|RogueGuess.vcxproj|solutionrelative:inbattle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{6DC78164-0E5A-4544-93BA-7BBC027A4DD3}|RogueGuess.vcxproj|C:\\Users\\owner_\\source\\repos\\RogueGuess\\cheat.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6DC78164-0E5A-4544-93BA-7BBC027A4DD3}|RogueGuess.vcxproj|solutionrelative:cheat.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{6DC78164-0E5A-4544-93BA-7BBC027A4DD3}|RogueGuess.vcxproj|C:\\Users\\owner_\\source\\repos\\RogueGuess\\cheat.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{6DC78164-0E5A-4544-93BA-7BBC027A4DD3}|RogueGuess.vcxproj|solutionrelative:cheat.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{6DC78164-0E5A-4544-93BA-7BBC027A4DD3}|RogueGuess.vcxproj|C:\\Users\\owner_\\source\\repos\\RogueGuess\\inbattle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{6DC78164-0E5A-4544-93BA-7BBC027A4DD3}|RogueGuess.vcxproj|solutionrelative:inbattle.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -44,7 +44,7 @@
               "RelativeDocumentMoniker": "main.c",
               "ToolTip": "C:\\Users\\owner_\\source\\repos\\RogueGuess\\main.c",
               "RelativeToolTip": "main.c",
-              "ViewState": "AgIAANUAAAAAAAAAAAAUwP8AAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2025-11-13T09:31:01.431Z",
               "EditorCaption": ""
@@ -55,19 +55,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "cheat.c",
               "DocumentMoniker": "C:\\Users\\owner_\\source\\repos\\RogueGuess\\cheat.c",
               "RelativeDocumentMoniker": "cheat.c",
               "ToolTip": "C:\\Users\\owner_\\source\\repos\\RogueGuess\\cheat.c",
               "RelativeToolTip": "cheat.c",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAUwDkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAADkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2025-11-13T10:25:10.085Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "cheat.h",
               "DocumentMoniker": "C:\\Users\\owner_\\source\\repos\\RogueGuess\\cheat.h",
               "RelativeDocumentMoniker": "cheat.h",
@@ -79,13 +79,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "inbattle.h",
               "DocumentMoniker": "C:\\Users\\owner_\\source\\repos\\RogueGuess\\inbattle.h",
               "RelativeDocumentMoniker": "inbattle.h",
               "ToolTip": "C:\\Users\\owner_\\source\\repos\\RogueGuess\\inbattle.h",
               "RelativeToolTip": "inbattle.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB0AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-11-13T09:56:57.273Z"
             },
@@ -97,7 +97,7 @@
               "RelativeDocumentMoniker": "inbattle.c",
               "ToolTip": "C:\\Users\\owner_\\source\\repos\\RogueGuess\\inbattle.c",
               "RelativeToolTip": "inbattle.c",
-              "ViewState": "AgIAAB0BAAAAAAAAAAAUwE0BAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAALQBAAAAAAAAAAAAANoBAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
               "WhenOpened": "2025-11-13T09:47:43.638Z"
             }

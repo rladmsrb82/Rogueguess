@@ -5,6 +5,10 @@
 
 static int used_second_chance_in_run = 0;  // 이번 런에서 두 번째 기회를 썼는지
 
+static int used_second_chance_trait = 0;   // trait로 부활 쓴 적 있는지
+static int remaining_rebirth_revives = 0;  // 이번 런에서 남은 영구 부활 횟수
+
+
 // 전투용 상태바 (전투마다 맨 위에 출력)
 static void print_battle_status(const Player* p, const GameState* g) {
     printf("[Lv %d] EXP %d/%d | Gold %d | Rebirth coin %d",
@@ -42,17 +46,17 @@ static void setup_monster(Player* p, GameState* g, int stage, int mob_index) {
     g->mob_index = mob_index;
     g->in_battle = 1;
 
-    // 기본 몬스터 설정
+    // --- 스테이지별 기본 몬스터 설정 ---
     if (stage == 1) {
-        if (mob_index == 1) {
+        if (mob_index == 1) {          // 1-1
             g->max_number = 30;
             g->max_hp = 5;
         }
-        else if (mob_index == 2) {
+        else if (mob_index == 2) {     // 1-2
             g->max_number = 40;
             g->max_hp = 5;
         }
-        else if (mob_index == 3) {
+        else if (mob_index == 3) {     // 1-3 (보스)
             g->max_number = 60;
             g->max_hp = 7;
         }
@@ -61,18 +65,58 @@ static void setup_monster(Player* p, GameState* g, int stage, int mob_index) {
             g->max_hp = 5;
         }
     }
+    else if (stage == 2) {
+        if (mob_index == 1) {          // 2-1
+            g->max_number = 50;
+            g->max_hp = 6;
+        }
+        else if (mob_index == 2) {     // 2-2
+            g->max_number = 70;
+            g->max_hp = 7;
+        }
+        else if (mob_index == 3) {     // 2-3 (보스)
+            g->max_number = 90;
+            g->max_hp = 9;
+        }
+        else {
+            g->max_number = 50;
+            g->max_hp = 6;
+        }
+    }
+    else if (stage == 3) {
+        if (mob_index == 1) {          // 3-1
+            g->max_number = 80;
+            g->max_hp = 8;
+        }
+        else if (mob_index == 2) {     // 3-2
+            g->max_number = 100;
+            g->max_hp = 10;
+        }
+        else if (mob_index == 3) {     // 3-3 (최종 보스)
+            g->max_number = 120;
+            g->max_hp = 12;
+        }
+        else {
+            g->max_number = 80;
+            g->max_hp = 8;
+        }
+    }
     else {
+        // 아직 구현 안 된 스테이지
         g->max_number = 30;
         g->max_hp = 5;
     }
 
-    // 🔹 체력 증가 특성 적용 (0~4 → +0~4 HP)
+    // 체력 증가 특성 적용
     if (p->trait_hp_level > 0) {
         g->max_hp += p->trait_hp_level;
     }
 
     g->hp = g->max_hp;
+
 }
+
+
 
 // 전투 시작 시 한 번만 아이템 사용 여부
 // - 작은 포션: 이번 전투 HP +3
@@ -207,7 +251,10 @@ static int fight_monster(Player* p, GameState* g) {
         // 🔹 판정 범위 trait 적용
         int bonus_range = 0;
         if (p->trait_range_level > 0) {
-            bonus_range = p->trait_range_level; // 1~3 → ±1~3
+            bonus_range += p->trait_range_level;
+        }
+        if (p->rebirth_range_level > 0) {
+            bonus_range += p->rebirth_range_level;
         }
 
         int diff = abs(guess - answer);
@@ -219,30 +266,55 @@ static int fight_monster(Player* p, GameState* g) {
             int exp_gain = 0;
             int gold_gain = 0;
 
-            // 몬스터별 기본 보상
-            if (g->stage == 1 && g->mob_index == 1) {
+            // --- 스테이지별 기본 보상 ---
+            if (g->stage == 1 && g->mob_index == 1) {          // 1-1
                 exp_gain = 15;
                 gold_gain = 10;
             }
-            else if (g->stage == 1 && g->mob_index == 2) {
+            else if (g->stage == 1 && g->mob_index == 2) {     // 1-2
                 exp_gain = 20;
                 gold_gain = 15;
             }
-            else if (g->stage == 1 && g->mob_index == 3) {
+            else if (g->stage == 1 && g->mob_index == 3) {     // 1-3 (보스)
                 exp_gain = 40;
                 gold_gain = 30;
             }
+            else if (g->stage == 2 && g->mob_index == 1) {     // 2-1
+                exp_gain = 30;
+                gold_gain = 25;
+            }
+            else if (g->stage == 2 && g->mob_index == 2) {     // 2-2
+                exp_gain = 40;
+                gold_gain = 30;
+            }
+            else if (g->stage == 2 && g->mob_index == 3) {     // 2-3 (보스)
+                exp_gain = 70;
+                gold_gain = 50;
+            }
+            else if (g->stage == 3 && g->mob_index == 1) {     // 3-1
+                exp_gain = 60;
+                gold_gain = 40;
+            }
+            else if (g->stage == 3 && g->mob_index == 2) {     // 3-2
+                exp_gain = 80;
+                gold_gain = 60;
+            }
+            else if (g->stage == 3 && g->mob_index == 3) {     // 3-3 (최종 보스)
+                exp_gain = 120;
+                gold_gain = 100;
+            }
             else {
+                // 기타 기본값
                 exp_gain = 10;
                 gold_gain = 5;
             }
 
-            // 🔹 골드 보너스 trait 적용
+            // 골드 보너스 특성
             if (p->trait_gold_bonus_level > 0) {
                 gold_gain += p->trait_gold_bonus_level * 10;
             }
 
-            // 🔹 정확한 감각 trait: 보상 2배
+            // 정확한 감각 특성: 보상 2배
             if (p->trait_exact_level > 0) {
                 exp_gain *= 2;
                 gold_gain *= 2;
@@ -259,6 +331,8 @@ static int fight_monster(Player* p, GameState* g) {
             player_win = 1;
             alive = 0;
         }
+
+
         else {
             g->hp--;
 
@@ -273,31 +347,44 @@ static int fight_monster(Player* p, GameState* g) {
                 g->hp, g->max_hp);
 
             if (g->hp <= 0) {
-                // 🔹 두 번째 기회 trait/아이템 체크
-                if (!used_second_chance_in_run &&
-                    (p->trait_second_chance_level > 0 || p->item_second_chance > 0)) {
-
-                    used_second_chance_in_run = 1;
-
-                    if (p->item_second_chance > 0) {
-                        p->item_second_chance--;
-                        printf("두 번째 기회 '아이템'이 발동했습니다!\n");
-                    }
-                    else {
-                        printf("두 번째 기회 '특성'이 발동했습니다!\n");
-                    }
-
+                // 1순위: 아이템 부활
+                if (p->item_second_chance > 0) {
+                    p->item_second_chance--;
+                    printf("두 번째 기회 '아이템'이 발동했습니다!\n");
                     g->hp = g->max_hp;
                     printf("HP가 전부 회복되고 전투를 계속합니다! (HP: %d/%d)\n",
                         g->hp, g->max_hp);
                     continue;
                 }
 
+                // 2순위: 일반 특성 부활 (한 번만)
+                if (p->trait_second_chance_level > 0 && !used_second_chance_trait) {
+                    used_second_chance_trait = 1;
+                    printf("두 번째 기회 '특성'이 발동했습니다!\n");
+                    g->hp = g->max_hp;
+                    printf("HP가 전부 회복되고 전투를 계속합니다! (HP: %d/%d)\n",
+                        g->hp, g->max_hp);
+                    continue;
+                }
+
+                // 3순위: 영구 패시브 부활 (레벨만큼 여러 번)
+                if (remaining_rebirth_revives > 0) {
+                    remaining_rebirth_revives--;
+                    printf("영구 두 번째 기회가 발동했습니다! (남은 영구 부활: %d회)\n",
+                        remaining_rebirth_revives);
+                    g->hp = g->max_hp;
+                    printf("HP가 전부 회복되고 전투를 계속합니다! (HP: %d/%d)\n",
+                        g->hp, g->max_hp);
+                    continue;
+                }
+
+                // 진짜로 사망
                 printf("체력이 0이 되어 쓰러졌습니다...\n");
                 printf("이번 런은 여기서 종료됩니다.\n");
                 alive = 0;
                 player_win = 0;
             }
+
         }
 
         printf("\n");
@@ -308,26 +395,93 @@ static int fight_monster(Player* p, GameState* g) {
 }
 
 // 외부에서 호출하는 런 시작 함수
-void start_new_game(Player* p, GameState* g) {
-    printf("새 게임(런)을 시작합니다! (1스테이지 진행)\n\n");
+// 스테이지 하나(1 or 2)를 도는 함수
+static int run_stage(Player* p, GameState* g, int stage) {
+    printf("%d 스테이지를 시작합니다!\n\n", stage);
 
-    used_second_chance_in_run = 0;
+    // 1~3번 몹(2마리 + 보스) 순서대로
+    for (int mob = 1; mob <= 3; mob++) {
+        setup_monster(p, g, stage, mob);
 
-    // 1-1
-    setup_monster(p, g, 1, 1);
-    if (!fight_monster(p, g)) return;
-    printf("1-1 스테이지 클리어!\n\n");
+        if (!fight_monster(p, g)) {
+            printf("%d-%d 에서 패배했습니다...\n\n", stage, mob);
+            return 0;  // 죽으면 런 종료
+        }
 
-    // 1-2
-    setup_monster(p, g, 1, 2);
-    if (!fight_monster(p, g)) return;
-    printf("1-2 스테이지 클리어!\n\n");
+        if (mob < 3)
+            printf("%d-%d 스테이지 클리어!\n\n", stage, mob);
+        else
+            printf("%d 스테이지 보스를 처치했습니다!\n\n", stage);
+    }
 
-    // 1-3 (보스)
-    setup_monster(p, g, 1, 3);
-    if (!fight_monster(p, g)) return;
-
-    printf("1스테이지 보스를 처치했습니다!\n");
-    printf("1스테이지를 모두 클리어했습니다!\n");
-    // TODO: 보스 특성 선택, 다음 스테이지, 환생 코인 등
+    printf("%d 스테이지를 모두 클리어했습니다!\n\n", stage);
+    return 1;
 }
+
+// 외부에서 호출하는 런 시작 함수
+void start_new_game(Player* p, GameState* g) {
+    printf("새 게임을 시작합니다! (1 스테이지부터 진행)\n\n");
+
+    used_second_chance_trait = 0;
+    remaining_rebirth_revives = p->rebirth_second_chance_level;  // 영구 부활 횟수 세팅
+
+    // 1스테이지
+    if (!run_stage(p, g, 1)) {
+        return;
+    }
+
+    // 2스테이지
+    if (!run_stage(p, g, 2)) {
+        return;
+    }
+
+    // 여기 오면 2스테이지까지 모두 클리어
+    // 👉 여기서 환생 여부 물어보기
+    // (run_stage(3)는 더 이상 호출 안 함)
+
+    printf("게임을 모두 클리어하셨습니다.\n");
+    printf("환생하시겠습니까?\n");
+    printf("1. 예\n");
+    printf("2. 아니요\n");
+    printf("선택: ");
+
+    int choice;
+    if (scanf_s("%d", &choice) != 1) {
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {}
+        return;
+    }
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF) {}
+
+    if (choice == 1) {
+        // 환생
+        p->rebirth_coin += 1;
+        printf("환생 코인을 1개 얻었습니다! (현재: %d개)\n", p->rebirth_coin);
+        printf("환생합니다... 레벨, 경험치, 골드, 아이템, 일반 특성이 초기화됩니다.\n");
+
+        // 여기서 "런마다 초기화되는 것들"만 리셋
+        p->level = 1;
+        p->exp = 0;
+        p->exp_to_next = 50;
+        p->gold = 0;
+
+        p->item_potion_small = 0;
+        p->item_insight = 0;
+        p->item_second_chance = 0;
+
+        p->trait_hp_level = 0;
+        p->trait_range_level = 0;
+        p->trait_gold_bonus_level = 0;
+        p->trait_exact_level = 0;
+        p->trait_insight_level = 0;
+        p->trait_second_chance_level = 0;
+
+        // 영구 패시브(rebirth_*), rebirth_coin은 그대로 유지
+    }
+    else {
+        printf("환생하지 않고 메인 메뉴로 돌아갑니다.\n");
+    }
+}
+
+

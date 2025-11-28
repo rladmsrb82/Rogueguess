@@ -27,18 +27,19 @@ void show_menu() {
     printf("3. 게임 방법\n");
     printf("4. 상점\n");
     printf("5. 게임 종료\n");
-    // 9번은 히든 치트 메뉴
+    printf("6. 환생 상점\n");      // 🔹 이 줄 추가
     printf("======================\n");
     printf("선택: ");
 }
 
+
 // 새 게임용 플레이어 초기화
 void reset_player(Player* p) {
+
     p->level = 1;
     p->exp = 0;
     p->exp_to_next = 50;
     p->gold = 0;
-    p->rebirth_coin = 0;
 
     p->item_potion_small = 0;
     p->item_insight = 0;
@@ -50,7 +51,10 @@ void reset_player(Player* p) {
     p->trait_exact_level = 0;
     p->trait_insight_level = 0;
     p->trait_second_chance_level = 0;
+
+    // rebirth_hp_level, rebirth_range_level, rebirth_second_chance_level, rebirth_coin 유지
 }
+
 
 // 세이브 / 로드
 int save_game(const Player* p) {
@@ -193,6 +197,79 @@ void open_shop(Player* p, GameState* g) {
     }
 }
 
+void open_rebirth_shop(Player* p) {
+    int running = 1;
+
+    while (running) {
+        printf("===== 환생 상점 =====\n");
+        printf("현재 환생 코인: %d개\n", p->rebirth_coin);
+        printf("1. 영구 HP +1 (현재 레벨: %d / 최대 3)\n", p->rebirth_hp_level);
+        printf("2. 영구 판정 범위 +1 (현재 레벨: %d / 최대 3)\n", p->rebirth_range_level);
+        printf("3. 영구 두 번째 기회 +1 (현재 레벨: %d / 최대 3)\n", p->rebirth_second_chance_level);
+        printf("0. 나가기\n");
+        printf("=====================\n");
+        printf("선택: ");
+
+        int choice;
+        if (scanf_s("%d", &choice) != 1) {
+            printf("잘못된 입력입니다.\n");
+            int c;
+            while ((c = getchar()) != '\n' && c != EOF) {}
+            continue;
+        }
+        int c;
+        while ((c = getchar()) != '\n' && c != EOF) {}
+
+        if (choice == 0) {
+            printf("환생 상점을 나갑니다.\n");
+            break;
+        }
+
+        int* level_ptr = NULL;
+        const char* name = NULL;
+
+        if (choice == 1) {
+            level_ptr = &p->rebirth_hp_level;
+            name = "영구 HP";
+        }
+        else if (choice == 2) {
+            level_ptr = &p->rebirth_range_level;
+            name = "영구 판정 범위";
+        }
+        else if (choice == 3) {
+            level_ptr = &p->rebirth_second_chance_level;
+            name = "영구 두 번째 기회";
+        }
+        else {
+            printf("0~3 중에서 선택하세요.\n\n");
+            continue;
+        }
+
+        if (*level_ptr >= 3) {
+            printf("%s는 이미 최대 레벨입니다.\n\n", name);
+            continue;
+        }
+
+        int next_level = *level_ptr + 1;
+        int cost = next_level;   // 1레벨: 1코인, 2레벨: 2코인, 3레벨: 3코인
+
+        if (p->rebirth_coin < cost) {
+            printf("환생 코인이 부족합니다. (필요: %d개)\n\n", cost);
+            continue;
+        }
+
+        p->rebirth_coin -= cost;
+        *level_ptr = next_level;
+
+        printf("%s 레벨이 %d로 증가했습니다! (소모 코인: %d개, 남은 코인: %d개)\n\n",
+            name, *level_ptr, cost, p->rebirth_coin);
+
+        // 영구 패시브 바뀌었으니 바로 저장
+        save_game(p);
+    }
+}
+
+
 // 메인 루프
 void game_loop(Player* player, GameState* game) {
     int running = 1;
@@ -213,13 +290,11 @@ void game_loop(Player* player, GameState* game) {
 
         switch (choice) {
         case 1:
-            // 새 게임은 항상 상태 리셋하고 런 1번 → 저장
             reset_player(player);
             start_new_game(player, game);
             save_game(player);
             break;
         case 2:
-            // 이어하기는 로드된 상태로 런 1번 → 저장
             continue_game(player, game);
             break;
         case 3:
@@ -233,15 +308,18 @@ void game_loop(Player* player, GameState* game) {
             printf("게임을 종료합니다.\n");
             running = 0;
             break;
-        case 9: // 히든 치트 메뉴
+        case 6:   // 🔹 환생 상점
+            open_rebirth_shop(player);
+            break;
+        case 9:
             open_cheat_menu(player);
-            // 치트로 상태 바뀌었으니까 바로 저장
             save_game(player);
             break;
         default:
-            printf("1~5를 선택하거나, 개발자 코드 9를 입력하세요.\n");
+            printf("1~6을 선택하거나, 개발자 코드 9를 입력하세요.\n");
             break;
         }
+
 
         printf("\n");
     }
